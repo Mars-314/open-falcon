@@ -26,17 +26,16 @@ var RedisConnPool *redis.Pool
 
 func InitRedisConnPool() {
 	redisConfig := Config().Redis
-	auth, addr := formatRedisAddr(redisConfig.Addr)
 	RedisConnPool = &redis.Pool{
 		MaxIdle:     redisConfig.MaxIdle,
 		IdleTimeout: 240 * time.Second,
 		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", addr)
+			c, err := redis.Dial("tcp", redisConfig.Addr)
 			if err != nil {
 				return nil, err
 			}
-			if auth != "" {
-				if _, err := c.Do("AUTH", auth); err != nil {
+			if redisConfig.Passwd != "" {
+				if _, err := c.Do("AUTH", redisConfig.Passwd); err != nil {
 					_ = c.Close()
 					return nil, err
 				}
@@ -47,6 +46,7 @@ func InitRedisConnPool() {
 	}
 }
 
+// Deprecated: ptg redis uses passwd with @
 func formatRedisAddr(addrConfig string) (string, string) {
 	if redisAddr := strings.Split(addrConfig, "@"); len(redisAddr) == 1 {
 		return "", redisAddr[0]
