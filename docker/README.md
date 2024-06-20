@@ -43,6 +43,8 @@ docker run -itd --name falcon-plus \
         --link=falcon-redis:redis.falcon \
         -p 8433:8433 \
         -p 8080:8080 \
+        -p 18433:18433 \
+        -p 6630:6630 \
         -e MYSQL_PORT=root:test123456@tcp\(db.falcon:3306\) \
         -e REDIS_PORT=redis.falcon:6379  \
         -v /home/work/open-falcon/data:/open-falcon/data \
@@ -92,6 +94,7 @@ docker run -itd --name falcon-dashboard \
 sudo docker run -d --restart always --name falcon-agent \
     -e NUX_ROOTFS=/rootfs \
     -v /:/rootfs:ro \
+    --network=host \
     openfalcon/falcon-plus:v0.3 \
     ./agent/bin/falcon-agent -c /open-falcon/agent/config/cfg.json
 ```
