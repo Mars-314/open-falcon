@@ -29,7 +29,6 @@ func InitRedisConnPool() {
 		return
 	}
 
-	auth, dsn := formatRedisAddr(Config().Alarm.Redis.Dsn)
 	maxIdle := Config().Alarm.Redis.MaxIdle
 	idleTimeout := 240 * time.Second
 
@@ -41,12 +40,12 @@ func InitRedisConnPool() {
 		MaxIdle:     maxIdle,
 		IdleTimeout: idleTimeout,
 		Dial: func() (redis.Conn, error) {
-			c, err := redis.DialTimeout("tcp", dsn, connTimeout, readTimeout, writeTimeout)
+			c, err := redis.DialTimeout("tcp", Config().Alarm.Redis.Dsn, connTimeout, readTimeout, writeTimeout)
 			if err != nil {
 				return nil, err
 			}
-			if auth != "" {
-				if _, err := c.Do("AUTH", auth); err != nil {
+			if Config().Alarm.Redis.Passwd != "" {
+				if _, err := c.Do("AUTH", Config().Alarm.Redis.Passwd); err != nil {
 					_ = c.Close()
 					return nil, err
 				}

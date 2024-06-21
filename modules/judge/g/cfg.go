@@ -16,9 +16,10 @@ package g
 
 import (
 	"encoding/json"
-	"github.com/toolkits/file"
 	"log"
 	"sync"
+
+	"github.com/toolkits/file"
 )
 
 type HttpConfig struct {
@@ -39,6 +40,7 @@ type HbsConfig struct {
 
 type RedisConfig struct {
 	Dsn          string `json:"dsn"`
+	Passwd       string `json:"passwd"`
 	MaxIdle      int    `json:"maxIdle"`
 	ConnTimeout  int    `json:"connTimeout"`
 	ReadTimeout  int    `json:"readTimeout"`
