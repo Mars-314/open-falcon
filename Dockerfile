@@ -8,7 +8,7 @@ ENV HTTP_PROXY=$http_proxy
 ENV HTTPS_PROXY=$https_proxy
 ENV FALCON_DIR=/open-falcon PROJ_PATH=${GOPATH}/src/github.com/open-falcon/falcon-plus
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
+RUN sudo sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
     mkdir -p $FALCON_DIR && \
     mkdir -p $FALCON_DIR/logs && \
     apk add --no-cache ca-certificates bash git supervisor
