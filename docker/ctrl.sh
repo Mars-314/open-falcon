@@ -11,7 +11,7 @@ action=$1
 module_name=$2
 case $action in
  run)
-        $DOCKER_DIR/"$module_name"/bin/falcon-"$module_name" -c /open-falcon/"$module_name"/config/cfg.json
+        supervisorctl start "$module_name"
         ;;
  *)
         supervisorctl $*
