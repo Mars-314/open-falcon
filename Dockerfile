@@ -8,7 +8,6 @@ ENV https_proxy=http://11.122.78.49:3128
 ENV HTTP_PROXY=$http_proxy
 ENV HTTPS_PROXY=$https_proxy
 ENV no_proxy=.aliyun.com
-
 ENV FALCON_DIR=/open-falcon PROJ_PATH=${GOPATH}/src/github.com/open-falcon/falcon-plus
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
