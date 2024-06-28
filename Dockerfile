@@ -11,7 +11,8 @@ ENV no_proxy=.aliyun.com
 
 ENV FALCON_DIR=/open-falcon PROJ_PATH=${GOPATH}/src/github.com/open-falcon/falcon-plus
 
-RUN mkdir -p $FALCON_DIR && \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
+    mkdir -p $FALCON_DIR && \
     mkdir -p $FALCON_DIR/logs && \
     apk add --no-cache ca-certificates bash git supervisor
 COPY . ${PROJ_PATH}
