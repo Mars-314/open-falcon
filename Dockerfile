@@ -4,8 +4,6 @@ LABEL maintainer laiwei.ustc@gmail.com
 USER root
 
 ENV FALCON_DIR=/open-falcon PROJ_PATH=${GOPATH}/src/github.com/open-falcon/falcon-plus
-ENV HTTP_PROXY=http://30.21.200.175:3128
-ENV HTTPS_PROXY=http://30.21.200.175:3128
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
     mkdir -p $FALCON_DIR && \
