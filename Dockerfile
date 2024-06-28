@@ -36,7 +36,7 @@ ADD docker/supervisord.conf /etc/supervisord.conf
 
 COPY --from=0 ${FALCON_DIR} ${FALCON_DIR}
 
-EXPOSE 8433 8080
+EXPOSE 8433 8080 18433 6030
 WORKDIR ${FALCON_DIR}
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
