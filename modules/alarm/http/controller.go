@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// 定义http.go中的三个函数，用于路由检查
 package http
 
 import (
