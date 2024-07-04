@@ -48,28 +48,32 @@ func main() {
 		os.Exit(0)
 	}
 
-	g.ParseConfig(*cfg)
+	g.ParseConfig(*cfg) //全局配置文件解析
 
 	g.InitLog(g.Config().LogLevel)
 	if g.Config().LogLevel != "debug" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	g.InitRedisConnPool()
-	model.InitDatabase()
-	cron.InitSenderWorker()
+	g.InitRedisConnPool()   //初始化Redis连接池
+	model.InitDatabase()    //初始化数据库ORM
+	cron.InitSenderWorker() //初始化发送Channel
 
-	go http.Start()
-	go cron.ReadHighEvent()
-	go cron.ReadLowEvent()
-	go cron.CombineSms()
-	go cron.CombineMail()
-	go cron.CombineIM()
-	go cron.ConsumeIM()
-	go cron.ConsumeSms()
-	go cron.ConsumeMail()
-	go cron.CleanExpiredEvent()
+	go http.Start()         //启动HTTP服务,API服务监听与处理
+	go cron.ReadHighEvent() //处理高优先级事件队列
+	go cron.ReadLowEvent()  //处理低优先级事件队列
 
+	go cron.CombineSms()  //合并SMS内容
+	go cron.CombineMail() //合并MAIL内容
+	go cron.CombineIM()   //合并IM内容
+
+	go cron.ConsumeIM()   //发送事件IM
+	go cron.ConsumeSms()  //发送事件Sms
+	go cron.ConsumeMail() //发送事件Mail
+
+	go cron.CleanExpiredEvent() //清理过期事件信息
+
+	// 注册系统信号syscall.SIGTERM，退出释放资源
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {

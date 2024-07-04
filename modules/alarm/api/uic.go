@@ -17,14 +17,15 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/open-falcon/falcon-plus/modules/alarm/g"
 	"github.com/open-falcon/falcon-plus/modules/api/app/model/uic"
 	log "github.com/sirupsen/logrus"
 	"github.com/toolkits/container/set"
 	"github.com/toolkits/net/httplib"
-	"strings"
-	"sync"
-	"time"
 )
 
 type APIGetTeamOutput struct {
@@ -57,6 +58,7 @@ func (this *UsersCache) Set(team string, users []*uic.User) {
 	this.M[team] = users
 }
 
+// 通过成员组查询成员
 func UsersOf(team string) []*uic.User {
 	users := CurlUic(team)
 
@@ -69,6 +71,7 @@ func UsersOf(team string) []*uic.User {
 	return users
 }
 
+// 通过成员组信息查询用户，获取用户信息map
 func GetUsers(teams string) map[string]*uic.User {
 	userMap := make(map[string]*uic.User)
 	arr := strings.Split(teams, ",")
@@ -89,7 +92,7 @@ func GetUsers(teams string) map[string]*uic.User {
 	return userMap
 }
 
-// return phones, emails, IM
+// 通过API查询解析维护人员组成员phones, emails, IM
 func ParseTeams(teams string) ([]string, []string, []string) {
 	if teams == "" {
 		return []string{}, []string{}, []string{}
@@ -113,19 +116,25 @@ func ParseTeams(teams string) ([]string, []string, []string) {
 	return phoneSet.ToSlice(), mailSet.ToSlice(), imSet.ToSlice()
 }
 
+// API组件接口，CURL HTTP访问与响应数据处理
+// 从UIC系统中根据团队名称获取该团队的所有用户信息
 func CurlUic(team string) []*uic.User {
 	if team == "" {
 		return []*uic.User{}
 	}
 
+	//根据全局配置拼接出请求UIC系统的URI，格式为{PlusApi}/api/v1/team/name/{team}，其中{team}为传入的团队名称
 	uri := fmt.Sprintf("%s/api/v1/team/name/%s", g.Config().Api.PlusApi, team)
+	//使用httplib.Get(uri)发起一个GET请求，并设置HTTP请求的超时时间为2秒连接超时，10秒读取超时
 	req := httplib.Get(uri).SetTimeout(2*time.Second, 10*time.Second)
+	//将鉴权信息（包含API名称和签名）以JSON格式序列化，并设置到请求头Apitoken中。鉴权信息由配置中的g.Config().Api.PlusApiToken提供
 	token, _ := json.Marshal(map[string]string{
 		"name": "falcon-alarm",
 		"sig":  g.Config().Api.PlusApiToken,
 	})
 	req.Header("Apitoken", string(token))
 
+	//使用req.ToJson发送请求并将响应体反序列化到team_users变量中，该变量类型为APIGetTeamOutput，用于接收UIC系统返回的关于团队用户信息的数据
 	var team_users APIGetTeamOutput
 	err := req.ToJson(&team_users)
 	if err != nil {
