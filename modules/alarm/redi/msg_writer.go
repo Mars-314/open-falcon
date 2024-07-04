@@ -16,8 +16,9 @@ package redi
 
 import (
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/open-falcon/falcon-plus/modules/alarm/g"
 	"github.com/open-falcon/falcon-plus/modules/alarm/model"
@@ -59,6 +60,7 @@ func WriteIMModel(im *model.IM) {
 	}
 
 	log.Debugf("write im to queue, im:%v, queue:%s", im, IM_QUEUE_NAME)
+	log.Println("write im to queue, im:", im, ", queue:", IM_QUEUE_NAME)
 	lpush(IM_QUEUE_NAME, string(bs))
 }
 
@@ -74,6 +76,7 @@ func WriteMailModel(mail *model.Mail) {
 	}
 
 	log.Debugf("write mail to queue, mail:%v, queue:%s", mail, MAIL_QUEUE_NAME)
+	log.Println("write mail to queue, im:", mail, ", queue:", MAIL_QUEUE_NAME)
 	lpush(MAIL_QUEUE_NAME, string(bs))
 }
 

@@ -58,9 +58,11 @@ func SendMail(mail *model.Mail) {
 	r.Param("content", mail.Content)
 	resp, err := r.String()
 	if err != nil {
+		log.Println("send mail fail, receiver:", mail.Tos, ", subject:", mail.Subject, ", content:", mail.Content, ", error:%v", err)
 		log.Errorf("send mail fail, receiver:%s, subject:%s, content:%s, error:%v", mail.Tos, mail.Subject, mail.Content, err)
 	}
 
 	//使用defer语句确保在函数退出前从MailWorkerChan通道接收一个信号，这与在SendIMList中发送的信号相匹配，从而控制并发工作goroutine的数量，避免无限制的增长
 	log.Debugf("send mail:%v, resp:%v, url:%s", mail, resp, url)
+	log.Println("send mail:", mail, ", resp:", resp, ", url:", url)
 }

@@ -48,7 +48,9 @@ func ReadHighEvent() {
 			continue
 		}
 		consume(event, true) //处理事件
+		log.Println("一次ReadHighEvent结束")
 	}
+
 }
 
 func ReadLowEvent() {
@@ -103,6 +105,7 @@ func popEvent(queues []string) (*cmodel.Event, error) {
 	}
 
 	log.Debugf("pop event: %s", event.String())
+	log.Println("pop event: ", event.String())
 
 	//insert event into database
 	//将事件实体存储到数据库中
