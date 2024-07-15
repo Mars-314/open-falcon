@@ -15,11 +15,11 @@
 package cron
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
+	// "bytes"
+	// "encoding/json"
+	// "fmt"
+	// "io/ioutil"
+	// "net/http"
 	"time"
 
 	"github.com/open-falcon/falcon-plus/modules/alarm/g"
@@ -29,12 +29,12 @@ import (
 	"github.com/toolkits/net/httplib"
 )
 
-type DingTalkMessage struct {
-	MsgType string `json:"msgtype"`
-	Text    struct {
-		Content string `json:"content"`
-	} `json:"text"`
-}
+// type DingTalkMessage struct {
+// 	MsgType string `json:"msgtype"`
+// 	Text    struct {
+// 		Content string `json:"content"`
+// 	} `json:"text"`
+// }
 
 func ConsumeIM() {
 	for {
@@ -50,7 +50,8 @@ func ConsumeIM() {
 func SendIMList(L []*model.IM) {
 	for _, im := range L {
 		IMWorkerChan <- 1
-		go SendDING(im)
+		// go SendDING(im)
+		go SendIM(im)
 	}
 }
 
@@ -73,39 +74,39 @@ func SendIM(im *model.IM) {
 	log.Debugf("send im:%v, resp:%v, url:%s", im, resp, url)
 }
 
-func SendDING(im *model.IM) {
-	defer func() {
-		<-IMWorkerChan
-	}()
+// func SendDING(im *model.IM) {
+// 	defer func() {
+// 		<-IMWorkerChan
+// 	}()
 
-	dingTalkMessage := DingTalkMessage{
-		MsgType: "text",
-		Text: struct {
-			Content string `json:"content"`
-		}{
-			Content: im.Content,
-		},
-	}
-	// 序列化消息体为JSON
-	jsonValue, err := json.Marshal(dingTalkMessage)
-	if err != nil {
-		log.Errorf("序列化消息体为JSON fail, dingTalkMessage:%s, error:%v", dingTalkMessage, err)
-	}
+// 	dingTalkMessage := DingTalkMessage{
+// 		MsgType: "text",
+// 		Text: struct {
+// 			Content string `json:"content"`
+// 		}{
+// 			Content: im.Content,
+// 		},
+// 	}
+// 	// 序列化消息体为JSON
+// 	jsonValue, err := json.Marshal(dingTalkMessage)
+// 	if err != nil {
+// 		log.Errorf("序列化消息体为JSON fail, dingTalkMessage:%s, error:%v", dingTalkMessage, err)
+// 	}
 
-	// 发送HTTP POST请求
-	resp, err := http.Post(im.Tos, "application/json", bytes.NewBuffer(jsonValue))
-	if err != nil {
-		log.Errorf("send dingding fail, tos:%s, content:%s, dingTalkMessage:%s, error:%v,", im.Tos, im.Content, dingTalkMessage, err)
-	}
-	defer resp.Body.Close()
+// 	// 发送HTTP POST请求
+// 	resp, err := http.Post(im.Tos, "application/json", bytes.NewBuffer(jsonValue))
+// 	if err != nil {
+// 		log.Errorf("send dingding fail, tos:%s, content:%s, dingTalkMessage:%s, error:%v,", im.Tos, im.Content, dingTalkMessage, err)
+// 	}
+// 	defer resp.Body.Close()
 
-	// 读取响应体
-	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Printf("Response: %s\n", body)
-	// 检查响应状态码
-	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("HTTP Status: %s, Body: %s", resp.Status, body)
-	}
+// 	// 读取响应体
+// 	body, _ := ioutil.ReadAll(resp.Body)
+// 	fmt.Printf("Response: %s\n", body)
+// 	// 检查响应状态码
+// 	if resp.StatusCode != http.StatusOK {
+// 		fmt.Printf("HTTP Status: %s, Body: %s", resp.Status, body)
+// 	}
 
-	log.Debugf("send im:%v, resp:%v, url:%s", im, resp, im.Tos)
-}
+// 	log.Debugf("send im:%v, resp:%v, url:%s", im, resp, im.Tos)
+// }
